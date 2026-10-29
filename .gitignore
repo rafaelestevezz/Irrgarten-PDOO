@@ -1,0 +1,17 @@
+# Archivos generados de Java y NetBeans
+java/build/
+java/dist/
+java/nbproject/private/
+*.class
+*.jar
+
+# Configuración local de los editores
+.idea/
+.vscode/
+*.iml
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
+*.log
+*~
