@@ -23,9 +23,22 @@ module Irrgarten
       Dice.intensity(@strength)
     end
 
+
     def defend(received_attack)
-      raise NotImplementedError, 'Pendiente de la P3'
+      is_dead = dead
+
+      unless is_dead
+        defensive_energy = Dice.intensity(@intelligence)
+
+        if defensive_energy < received_attack
+          got_wounded
+          is_dead = dead
+        end
+      end
+
+      is_dead
     end
+
 
     def set_pos(row, col)
       @row = row

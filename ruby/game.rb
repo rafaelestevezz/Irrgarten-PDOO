@@ -37,7 +37,35 @@ module Irrgarten
     end
 
     def next_step(preferred_direction)
-      raise NotImplementedError, 'Pendiente de la P3'
+      @log = ''
+      is_dead = @current_player.dead
+
+      unless is_dead
+        direction = actual_direction(preferred_direction)
+
+        if direction != preferred_direction
+          log_player_no_orders
+        end
+
+        monster = @labyrinth.put_player(direction, @current_player)
+
+        if monster.nil?
+          log_no_monster
+        else
+          winner = combat(monster)
+          manage_reward(winner)
+        end
+      else
+        manage_resurrection
+      end
+
+      end_game = finished
+
+      unless end_game
+        next_player
+      end
+
+      end_game
     end
 
     def get_game_state
@@ -69,19 +97,60 @@ module Irrgarten
     end
 
     def actual_direction(preferred_direction)
-      raise NotImplementedError, 'Pendiente de la P3'
+      current_row = @current_player.row
+      current_col = @current_player.col
+
+      valid_moves = @labyrinth.valid_moves(current_row, current_col)
+
+      output = @current_player.move(preferred_direction, valid_moves)
+
+      output
     end
 
     def combat(monster)
-      raise NotImplementedError, 'Pendiente de la P3'
+      rounds = 0
+      winner = GameCharacter::PLAYER
+
+      player_attack = @current_player.attack
+      lose = monster.defend(player_attack)
+
+      while !lose && rounds < MAX_ROUNDS
+        winner = GameCharacter::MONSTER
+        rounds += 1
+
+        monster_attack = monster.attack
+        lose = @current_player.defend(monster_attack)
+
+        unless lose
+          player_attack = @current_player.attack
+          winner = GameCharacter::PLAYER
+          lose = monster.defend(player_attack)
+        end
+      end
+
+      log_rounds(rounds, MAX_ROUNDS)
+
+      winner
     end
 
     def manage_reward(winner)
-      raise NotImplementedError, 'Pendiente de la P3'
+      if winner == GameCharacter::PLAYER
+        @current_player.receive_reward
+        log_player_won
+      else
+        log_monster_won
+      end
     end
 
     def manage_resurrection
-      raise NotImplementedError, 'Pendiente de la P3'
+      resurrect = Dice.resurrect_player
+
+      if resurrect
+        @current_player.resurrect
+        log_resurrected
+      else
+        log_player_skip_turn
+      end
     end
 
     def log_player_won
