@@ -10,6 +10,8 @@ package irrgarten;
  */
 
 import java.util.Random;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class Dice {
 
@@ -69,10 +71,20 @@ public class Dice {
     }
 
     public static float intensity(float competence) {
-        return generator.nextFloat(competence);
+        return generator.nextFloat() * competence;
     }
 
     public static boolean discardElement(int usesLeft) {
         return generator.nextInt(MAX_USES) >= usesLeft;
+    }
+
+    public static Directions nextStep(Directions preference, ArrayList<Directions> validMoves, float intelligence){
+
+        if(((intelligence / MAX_INTELLIGENCE) > generator.nextFloat()) || validMoves.isEmpty()){
+            return preference;
+        }else{
+            int randomise = generator.nextInt(validMoves.size());
+            return validMoves.get(randomise);
+        }
     }
 }

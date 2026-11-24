@@ -236,4 +236,11 @@ public class Labyrinth {
         
         return output;
     }
+    
+    public void replacePlayer(Player player) {
+        int row = player.getRow();
+        int col = player.getCol();
+
+        players[row][col] = player;
+    }
 }

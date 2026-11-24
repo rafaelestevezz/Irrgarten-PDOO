@@ -1,4 +1,4 @@
-#encoding:utf-8
+# encoding: UTF-8
 
 module Irrgarten
   class Dice
@@ -60,11 +60,24 @@ module Irrgarten
     end
 
     def self.intensity(competence)
+      return 0.0 if competence == 0
+
       @@generator.rand(competence)
     end
 
     def self.discard_element(uses_left)
       @@generator.rand(@@MAX_USES) >= uses_left
+    end
+
+    def self.next_step(preference, valid_moves, intelligence)
+      if valid_moves.empty? ||
+         intelligence / @@MAX_INTELLIGENCE > @@generator.rand
+
+        return preference
+      else
+        randomise = @@generator.rand(valid_moves.size)
+        return valid_moves[randomise]
+      end
     end
 
   end

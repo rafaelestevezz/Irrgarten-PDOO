@@ -55,8 +55,6 @@ module UI
     end
 
     def show_game(game_state)
-
-    def show_game(game_state)
       puts "\nIRRGARTEN"
 
       puts "\nLABERINTO:"
@@ -80,10 +78,6 @@ module UI
       puts "\n"
     end
 
-    end
-
   end # class
 
 end # module
-
-

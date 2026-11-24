@@ -138,12 +138,18 @@ public class Game {
     public void manageResurrection() {
         boolean resurrect = Dice.resurrectPlayer();
         
-        if(resurrect){
-            currentPlayer.resurrect();
-            this.logResurrected();
-        }else{
-            this.logPlayerSkipTurn();
-        }
+        if (resurrect) {
+        FuzzyPlayer newPlayer = new FuzzyPlayer(currentPlayer);
+        newPlayer.resurrect();
+
+        players.set(currentPlayerIndex, newPlayer);
+        currentPlayer = newPlayer;
+        labyrinth.replacePlayer(newPlayer);
+
+        this.logResurrected();
+    } else {
+        this.logPlayerSkipTurn();
+    }
     }
 
     public void logPlayerWon() {

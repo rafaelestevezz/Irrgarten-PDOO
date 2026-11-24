@@ -2,62 +2,52 @@ package irrgarten;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-public class Player {
+public class Player extends LabyrinthCharacter{
     private static final int MAX_WEAPONS = 2;
     private static final int MAX_SHIELDS = 3;
     private static final int INITIAL_HEALTH = 10;
     private static final int HITS2LOSE = 3;
 
-    private String name;
     private char number;
-    private float intelligence;
-    private float strength;
-    private float health;
-    private int row;
-    private int col;
     private int consecutiveHits = 0;
 
     private ArrayList<Weapon> weapons;
     private ArrayList<Shield> shields;
+    
+    private WeaponCardDeck weaponCardDeck;
+    private ShieldCardDeck shieldCardDeck;
 
     public Player(char number, float intelligence, float strength) {
+        super("Player " + number, intelligence, strength, INITIAL_HEALTH);
         this.number = number;
-        this.name = "Player #" + this.number;
-        this.intelligence = intelligence;
-        this.strength = strength;
-        this.health = INITIAL_HEALTH;
-        this.row = -1;
-        this.col = -1;
+        
         this.weapons = new ArrayList<>();
         this.shields = new ArrayList<>();
+        
+        this.weaponCardDeck = new WeaponCardDeck();
+        this.shieldCardDeck = new ShieldCardDeck();
+    }
+    
+    public Player(Player other){
+        super(other);
+        this.number = other.number;
+        this.consecutiveHits = other.consecutiveHits;
+        this.weapons = new ArrayList<>(other.weapons);
+        this.shields = new ArrayList<>(other.shields);
+        
+        this.weaponCardDeck = other.weaponCardDeck;
+        this.shieldCardDeck = other.shieldCardDeck;
     }
 
     public void resurrect() {
         weapons.clear();
         shields.clear();
-        this.health = INITIAL_HEALTH;
+        this.setHealth(INITIAL_HEALTH);
         this.consecutiveHits = 0;
-    }
-
-    public int getRow() {
-        return this.row;
-    }
-
-    public int getCol() {
-        return this.col;
     }
 
     public char getNumber() {
         return this.number;
-    }
-
-    public void setPos(int row, int col) {
-        this.row = row;
-        this.col = col;
-    }
-
-    public boolean dead() {
-        return this.health <= 0;
     }
 
     public Directions move(Directions direction, Directions[] validMoves) {
@@ -73,10 +63,12 @@ public class Player {
         return direction;
     }
 
+    @Override
     public float attack() {
-        return this.strength + this.sumWeapons();
+        return this.getStrength() + this.sumWeapons();
     }
 
+    @Override
     public boolean defend(float receivedAttack) {
         return this.manageHit(receivedAttack);
     }
@@ -96,13 +88,14 @@ public class Player {
             this.receiveShield(snew);
         }
         
-        health = health + extraHealth;
+        setHealth(getHealth() + extraHealth);
     }
 
+    @Override
     public String toString() {
-        return this.name + " (I: " + this.intelligence + ", S: " + this.strength + ", H: " + this.health +
-                ", Pos: (" + this.row + ", " + this.col + "), Weapons: " + this.weapons.size() +
-                ", Shields: " + this.shields.size() + ")";
+        return super.toString() +
+           ", Weapons: " + this.weapons.size() +
+           ", Shields: " + this.shields.size();
     }
 
     private void receiveWeapon(Weapon w) {
@@ -144,14 +137,14 @@ public class Player {
     }
 
     private Weapon newWeapon() {
-        return new Weapon(Dice.weaponPower(), Dice.usesLeft());
+        return weaponCardDeck.nextCard();
     }
 
     private Shield newShield() {
-        return new Shield(Dice.shieldPower(), Dice.usesLeft());
+        return shieldCardDeck.nextCard();
     }
 
-    private float sumWeapons() {
+    protected float sumWeapons() {
         float sum = 0.0f;
 
         for (int i = 0; i < weapons.size(); i++) {
@@ -160,7 +153,7 @@ public class Player {
         return sum;
     }
 
-    private float sumShields() {
+    protected float sumShields() {
         float sum = 0.0f;
 
         for (int i = 0; i < shields.size(); i++) {
@@ -169,8 +162,8 @@ public class Player {
         return sum;
     }
 
-    private float defensiveEnergy() {
-        return this.intelligence + this.sumShields();
+    protected float defensiveEnergy() {
+        return this.getIntelligence() + this.sumShields();
     }
 
     private boolean manageHit(float receivedAttack) {
@@ -196,10 +189,6 @@ public class Player {
 
     private void resetHits() {
         this.consecutiveHits = 0;
-    }
-
-    private void gotWounded() {
-        this.health = this.health - 1;
     }
 
     private void incConsecutiveHits() {

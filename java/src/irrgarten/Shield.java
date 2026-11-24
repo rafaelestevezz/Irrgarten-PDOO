@@ -8,32 +8,18 @@ package irrgarten;
  *
  * @author rafae
  */
-public class Shield {
-
-    private float protection;
-    private int uses;
+public class Shield extends CombatElement{
 
     public Shield(float protection, int uses) {
-        this.protection = protection;
-        this.uses = uses;
+        super(protection, uses);
     }
 
     public float protect() {
-        float damage = 0.0f;
-
-        if (uses > 0) {
-            uses--;
-            damage = this.protection;
-        }
-        return damage;
+        return produceEffect();
     }
 
     @Override
     public String toString() {
-        return "S[" + protection + ", " + uses + "]";
-    }
-    
-    public boolean discard(){
-        return Dice.discardElement(uses);
+        return "S" + super.toString();
     }
 }

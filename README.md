@@ -8,7 +8,9 @@ Ambas versiones comparten la lógica del juego y permiten trabajar los conceptos
 
 Los jugadores se desplazan por un laberinto con obstáculos, monstruos y una casilla de salida. El objetivo es llegar a la salida para finalizar la partida.
 
-Durante el recorrido se gestionan movimientos válidos, combates por turnos, armas, escudos y recompensas. El sistema también contempla la pérdida de combates, la muerte de personajes y la posibilidad de resurrección. Parte de los atributos y acontecimientos de la partida se determinan mediante métodos aleatorios de la clase `Dice`.
+Durante el recorrido se gestionan movimientos válidos, combates por turnos, armas, escudos y recompensas. El sistema también contempla la pérdida de combates, la muerte de personajes y la posibilidad de resurrección.
+
+Tras resucitar, los jugadores se convierten en FuzzyPlayer, un tipo de jugador cuyo movimiento, ataque y defensa incorporan un componente aleatorio.
 
 ## Diseño del proyecto
 
@@ -16,8 +18,12 @@ Las responsabilidades se distribuyen entre distintas clases:
 
 - **`Game`**: coordina los turnos, los combates, las recompensas y la finalización de la partida.
 - **`Labyrinth`**: representa el tablero y gestiona obstáculos, posiciones y movimientos.
+- **`LabyrinthCharacter`**: generaliza los atributos y comportamientos comunes de los personajes.
 - **`Player` y `Monster`**: modelan los personajes y su comportamiento en combate.
+- **`FuzzyPlayer`**: especializa el comportamiento de los jugadores tras resucitar.
+- **`CombatElement`**: reúne el comportamiento común de armas y escudos.
 - **`Weapon` y `Shield`**: representan el equipamiento de los jugadores.
+- **`CardDeck`, `WeaponCardDeck` y `ShieldCardDeck`**: gestionan las barajas de equipamiento en Java.
 - **`Dice`**: centraliza los cálculos y decisiones aleatorias.
 - **`GameState`**: reúne la información que se muestra durante la partida.
 - **`TextUI`, `Controller` y `Main`**: proporcionan la interfaz por consola, la coordinación con el modelo y el punto de entrada.
@@ -43,7 +49,17 @@ Irrgarten-PDOO/
 
 ## Evolución
 
-El repositorio conserva el desarrollo incremental de la asignatura. Las primeras prácticas establecieron las clases y operaciones básicas del modelo; hasta la **práctica 3** se ha incorporado la lógica de movimiento, combate, recompensas y resurrección, junto con una interfaz de texto que permite jugar partidas completas.
+El repositorio conserva el desarrollo incremental de la asignatura.
+
+| Práctica | Contenido | Estado |
+|---|---|---|
+| P1 | Conceptos básicos de programación orientada a objetos | Completada |
+| P2 | Diseño estructural e implementación del modelo | Completada |
+| P3 | Diseño dinámico, lógica del juego e interfaz de texto | Completada |
+| P4 | Herencia, clases abstractas, polimorfismo y clases genéricas | Completada |
+| P5 | Interfaz gráfica y patrón MVC | Pendiente |
+
+En la práctica 4 se ha refactorizado el modelo mediante jerarquías de herencia, eliminando código duplicado e incorporando un nuevo tipo de jugador. También se han introducido clases genéricas para gestionar las barajas de armas y escudos en Java.
 
 Las implementaciones de Java y Ruby evolucionan en paralelo, respetando las particularidades de cada lenguaje.
 

@@ -1,4 +1,4 @@
-#encoding:utf-8
+# encoding: UTF-8
 
 require_relative 'dice'
 require_relative 'directions'
@@ -8,6 +8,7 @@ require_relative 'player'
 
 module Irrgarten
   class Labyrinth
+
     BLOCK_CHAR = 'X'
     EMPTY_CHAR = '-'
     MONSTER_CHAR = 'M'
@@ -25,19 +26,23 @@ module Irrgarten
 
       @monsters = Array.new(n_rows) { Array.new(n_cols) }
       @players = Array.new(n_rows) { Array.new(n_cols) }
-      @labyrinth = Array.new(n_rows) { Array.new(n_cols, EMPTY_CHAR) }
+
+      @labyrinth = Array.new(n_rows) do
+        Array.new(n_cols, EMPTY_CHAR)
+      end
 
       @labyrinth[@exit_row][@exit_col] = EXIT_CHAR
     end
 
-
     def spread_players(players)
       players.each do |p|
         pos = random_empty_pos
-        put_player_2d(-1, -1, pos[@@ROW], pos[@@COL], p)
+
+        put_player_2d(
+          -1, -1, pos[@@ROW], pos[@@COL], p
+        )
       end
     end
-
 
     def have_a_winner
       !@players[@exit_row][@exit_col].nil?
@@ -50,6 +55,7 @@ module Irrgarten
         @n_cols.times do |col|
           resultado += @labyrinth[row][col]
         end
+
         resultado += "\n"
       end
 
@@ -60,10 +66,10 @@ module Irrgarten
       if pos_ok(row, col) && empty_pos(row, col)
         @labyrinth[row][col] = MONSTER_CHAR
         @monsters[row][col] = monster
+
         monster.set_pos(row, col)
       end
     end
-
 
     def put_player(direction, player)
       old_row = player.row
@@ -80,8 +86,6 @@ module Irrgarten
       monster
     end
 
-
-
     def add_block(orientation, start_row, start_col, length)
       if orientation == Orientation::VERTICAL
         inc_row = 1
@@ -94,8 +98,11 @@ module Irrgarten
       row = start_row
       col = start_col
 
-      while pos_ok(row, col) && empty_pos(row, col) && length > 0
+      while pos_ok(row, col) && empty_pos(row, col) &&
+            length > 0
+
         @labyrinth[row][col] = BLOCK_CHAR
+
         length -= 1
         row += inc_row
         col += inc_col
@@ -111,6 +118,13 @@ module Irrgarten
       output << Directions::LEFT if can_step_on(row, col - 1)
 
       output
+    end
+
+    def replace_player(player)
+      row = player.row
+      col = player.col
+
+      @players[row][col] = player
     end
 
     private
@@ -157,10 +171,13 @@ module Irrgarten
       case direction
       when Directions::UP
         row -= 1
+
       when Directions::DOWN
         row += 1
+
       when Directions::LEFT
         col -= 1
+
       when Directions::RIGHT
         col += 1
       end
@@ -177,11 +194,11 @@ module Irrgarten
       end
     end
 
-
     def put_player_2d(old_row, old_col, row, col, player)
       output = nil
 
       if can_step_on(row, col)
+
         if pos_ok(old_row, old_col)
           p = @players[old_row][old_col]
 
@@ -191,9 +208,7 @@ module Irrgarten
           end
         end
 
-        monster_pos = monster_pos(row, col)
-
-        if monster_pos
+        if monster_pos(row, col)
           @labyrinth[row][col] = COMBAT_CHAR
           output = @monsters[row][col]
         else
