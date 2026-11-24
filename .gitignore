@@ -5,6 +5,9 @@ java/nbproject/private/
 *.class
 *.jar
 
+# Archivos generados de Ruby
+.ruby-lsp/
+
 # Configuración local de los editores
 .idea/
 .vscode/
